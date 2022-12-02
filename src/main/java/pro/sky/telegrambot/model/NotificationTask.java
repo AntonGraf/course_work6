@@ -1,9 +1,6 @@
 package pro.sky.telegrambot.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,6 +15,10 @@ public class NotificationTask {
     private String text;
 
     private LocalDateTime dateTime;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private NotificationTaskStatus status;
 
     public long getId() {
         return id;
@@ -51,6 +52,14 @@ public class NotificationTask {
         this.dateTime = dateTime;
     }
 
+    public NotificationTaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(NotificationTaskStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,7 +70,8 @@ public class NotificationTask {
         if (id != that.id) return false;
         if (chatId != that.chatId) return false;
         if (text != null ? !text.equals(that.text) : that.text != null) return false;
-        return dateTime != null ? dateTime.equals(that.dateTime) : that.dateTime == null;
+        if (dateTime != null ? !dateTime.equals(that.dateTime) : that.dateTime != null) return false;
+        return status != null ? status.equals(that.status) : that.status == null;
     }
 
     @Override
@@ -70,6 +80,7 @@ public class NotificationTask {
         result = 31 * result + (int) (chatId ^ (chatId >>> 32));
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
 
@@ -80,6 +91,7 @@ public class NotificationTask {
                 ", chatId=" + chatId +
                 ", text='" + text + '\'' +
                 ", dateTime=" + dateTime +
+                ", status=" + status.getStatus() +
                 '}';
     }
 }

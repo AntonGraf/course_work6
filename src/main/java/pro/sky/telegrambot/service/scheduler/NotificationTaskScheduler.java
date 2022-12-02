@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
+import pro.sky.telegrambot.repository.NotificationTaskStatusRepository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +26,8 @@ public class NotificationTaskScheduler {
 
     @Autowired
     private NotificationTaskRepository repository;
+    @Autowired
+    private NotificationTaskStatusRepository statusRepository;
 
     @Scheduled(cron = "0 * * * * *")
     public void sendNotification() {
@@ -36,9 +39,18 @@ public class NotificationTaskScheduler {
 
                     SendMessage sendMessage = new SendMessage(task.getChatId(), task.getText());
                     SendResponse response = telegramBot.execute(sendMessage);
+                    task.setStatus(statusRepository.findNotificationTaskStatusByStatus("отправлено"));
 
-                    LOGGER.info("Напоминание: " + task.getText() + " - " + (response.isOk() ? "отправлено" :
-                            "не отправлено"));
+                    if(response.isOk()) {
+                        LOGGER.info("Напоминание: " + task.getText() + " - отправлено");
+                        task.setStatus(statusRepository.findNotificationTaskStatusByStatus("доставлено"));
+                    } else {
+                        LOGGER.info("Напоминание: " + task.getText() + " - не доставлено");
+                        task.setStatus(statusRepository.findNotificationTaskStatusByStatus("ошибка"));
+                    }
+
+                    repository.save(task);
+
                 });
 
     }

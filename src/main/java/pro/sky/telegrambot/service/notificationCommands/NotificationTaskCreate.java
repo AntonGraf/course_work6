@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.exception.NotificationTaskFormatException;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
+import pro.sky.telegrambot.repository.NotificationTaskStatusRepository;
 import pro.sky.telegrambot.service.CommandService;
 
 import java.time.LocalDateTime;
@@ -27,10 +28,11 @@ public class NotificationTaskCreate implements CommandService {
     private final String SUCCESS_COMMAND = "Команда выполнена";
 
     private final NotificationTaskRepository repository;
+    private final NotificationTaskStatusRepository statusRepository;
 
-
-    public NotificationTaskCreate(NotificationTaskRepository repository) {
+    public NotificationTaskCreate(NotificationTaskRepository repository, NotificationTaskStatusRepository statusRepository) {
         this.repository = repository;
+        this.statusRepository = statusRepository;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class NotificationTaskCreate implements CommandService {
 
         notificationTask.setDateTime(getDateTime(dateString));
         notificationTask.setText(message.text().replace(dateString, "").trim());
-
+        notificationTask.setStatus(statusRepository.findNotificationTaskStatusByStatus("добавлено"));
 
         return notificationTask;
     }
