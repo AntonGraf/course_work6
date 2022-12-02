@@ -1,4 +1,4 @@
-package pro.sky.telegrambot;
+package pro.sky.telegrambot.exception;
 
 public class NotificationTaskFormatException extends RuntimeException{
     public NotificationTaskFormatException(String message) {
