@@ -35,6 +35,11 @@ public class NotificationTaskCreate implements CommandService {
         this.statusRepository = statusRepository;
     }
 
+    /**
+     * Формирует сообщение для отправки
+     * @param message   - входящее сообщение с командой для напоминания
+     * @return          - ответное сообщение с текстом об успешном/неуспешном выполнении команды
+     */
     @Override
     public SendMessage executeCommand(Message message) {
 
@@ -50,6 +55,12 @@ public class NotificationTaskCreate implements CommandService {
 
     }
 
+    /**
+     * Распознает из сообщения задание для напоминания
+     * @param message   - входящее сообщение с заданием
+     * @return          - задание для напоминания
+     * @throws NotificationTaskFormatException  - в случае некорректного формата сообщения с заданием
+     */
     private NotificationTask parse(Message message) throws NotificationTaskFormatException {
 
         NotificationTask notificationTask = new NotificationTask();
@@ -64,6 +75,12 @@ public class NotificationTaskCreate implements CommandService {
         return notificationTask;
     }
 
+    /**
+     * Распознает даты и время из текста
+     * @param text  - текст с датой и временем
+     * @return      - распознанные дата и время
+     * @throws NotificationTaskFormatException  - в случае некорректного формата даты и времени
+     */
     private LocalDateTime getDateTime(String text) throws NotificationTaskFormatException {
 
         LOGGER.debug("Распознается дата из строки: " + text);

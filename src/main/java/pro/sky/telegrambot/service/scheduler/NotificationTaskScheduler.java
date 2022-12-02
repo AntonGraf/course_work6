@@ -29,6 +29,9 @@ public class NotificationTaskScheduler {
     @Autowired
     private NotificationTaskStatusRepository statusRepository;
 
+    /**
+     * Проверяет раз в минуту, какие напоминания необходимо отправить и отправляет напоминания
+     */
     @Scheduled(cron = "0 * * * * *")
     public void sendNotification() {
         Collection<NotificationTask> notificationTasks = getNotificationTaskByNowTime(LocalDateTime.now().
@@ -55,6 +58,11 @@ public class NotificationTaskScheduler {
 
     }
 
+    /**
+     * Находит напоминания на указанные время и дату
+     * @param localDateTime - время и дату, за которые необходимо найти напоминания
+     * @return              - список найденных напоминаний на указанные дату и время
+     */
     private Collection<NotificationTask> getNotificationTaskByNowTime(LocalDateTime localDateTime) {
         LOGGER.info("Поиск напоминаний на: " + localDateTime);
         return repository.findNotificationTaskByDateTime(localDateTime);
