@@ -18,12 +18,9 @@ import java.util.Collection;
 
 @Service
 public class NotificationTaskScheduler {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationTaskScheduler.class);
-
     @Autowired
     private TelegramBot telegramBot;
-
     @Autowired
     private NotificationTaskRepository repository;
     @Autowired
@@ -37,9 +34,8 @@ public class NotificationTaskScheduler {
         Collection<NotificationTask> notificationTasks = getNotificationTaskByNowTime(LocalDateTime.now().
                 truncatedTo(ChronoUnit.MINUTES));
 
-        notificationTasks.stream()
+        notificationTasks
                 .forEach(task -> {
-
                     SendMessage sendMessage = new SendMessage(task.getChatId(), task.getText());
                     SendResponse response = telegramBot.execute(sendMessage);
                     task.setStatus(statusRepository.findNotificationTaskStatusByStatus("отправлено"));
@@ -53,9 +49,7 @@ public class NotificationTaskScheduler {
                     }
 
                     repository.save(task);
-
                 });
-
     }
 
     /**
@@ -67,6 +61,4 @@ public class NotificationTaskScheduler {
         LOGGER.info("Поиск напоминаний на: " + localDateTime);
         return repository.findNotificationTaskByDateTime(localDateTime);
     }
-
-
 }

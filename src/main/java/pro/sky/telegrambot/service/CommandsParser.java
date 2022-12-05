@@ -4,17 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
 import pro.sky.telegrambot.repository.NotificationTaskStatusRepository;
-import pro.sky.telegrambot.service.notificationCommands.NotificationTaskCreate;
 
 import java.util.regex.Pattern;
 
 @Service
 public class CommandsParser {
-
     @Autowired
     private NotificationTaskRepository notificationTaskRepository;
     @Autowired
     private NotificationTaskStatusRepository statusRepository;
+    @Autowired
+    private DefaultCommand defaultCommand;
+    @Autowired
+    private StartCommand startCommand;
     //Формат сообщения с заданием для напоминания
     private final String NOTIFICATION_TASK_PATTERN = "([0-9.:\\s]{16})(\\s)([\\W+]+)";
 
@@ -26,14 +28,14 @@ public class CommandsParser {
     public CommandService getCommandService(String text) {
 
         if (text.startsWith("/start")) {
-            return new StartCommand();
+            return startCommand;
         }
 
         if (isNotificationTaskCreateCommand(text)) {
             return new NotificationTaskCreate(notificationTaskRepository, statusRepository);
         }
 
-        return new DefaultCommand();
+        return defaultCommand;
     }
 
     /**
@@ -45,6 +47,4 @@ public class CommandsParser {
         Pattern pattern = Pattern.compile(NOTIFICATION_TASK_PATTERN);
         return pattern.matcher(text).find();
     }
-
-
 }
